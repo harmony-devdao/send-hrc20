@@ -46,18 +46,17 @@ const weiAmount = transfer_amount_bn.mul(BigNumber.from(10).pow(token.decimals))
 // Note: If you want to use tokens in a contract you need to approve them 
 // first.
 tokenContract.transfer(toAddress, weiAmount).then((result) => {
-    console.log(`Successfully transfered ${transferAmount} (${weiAmount} wei, ${token.decimals} decimals) ${token.symbol} to address:\n${toAddress}`)
 
-
-    // OPTIONAL:
     // We wait until the transaction is finalized.
     // and check if the balance updated correctly!
-    result.wait().then(receipt =>{
+    result.wait().then(receipt => {
+        console.log(`Successfully transfered ${transferAmount} (${weiAmount} wei, ${token.decimals} decimals) ${token.symbol} to address:\n${toAddress}`)
+
         tokenContract.balanceOf(toAddress).then((result) => {
             console.log(`Balance of ${toAddress}: ${result.div(BigNumber.from(10).pow(token.decimals))} (${result} wei, ${token.decimals} decimals) `)
-        }).catch(console.log)
-    })
+        }).catch(console.error)
+    }).catch(console.error)
 
 }).catch((e) => {
-    console.log("Could not transfer funds:" + e)
+    console.error("Could not transfer funds:" + e)
 })
