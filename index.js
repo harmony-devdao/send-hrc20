@@ -45,19 +45,18 @@ const weiAmount = transfer_amount_bn.mul(BigNumber.from(10).pow(token.decimals))
 // method on the token contract.
 // Note: If you want to use tokens in a contract you need to approve them 
 // first.
-tokenContract.transfer(toAddress, weiAmount).then(() => {
+tokenContract.transfer(toAddress, weiAmount).then((result) => {
     console.log(`Successfully transfered ${transferAmount} (${weiAmount} wei, ${token.decimals} decimals) ${token.symbol} to address:\n${toAddress}`)
 
 
-    // TODO: I'm not sure why we need to wait until we fetch the token balance.
-    // I thought then is called when the transaction was processed by the blockchain.
-    setTimeout(() => {
+    // OPTIONAL:
+    // We wait until the transaction is finalized.
+    // and check if the balance updated correctly!
+    result.wait().then(receipt =>{
         tokenContract.balanceOf(toAddress).then((result) => {
             console.log(`Balance of ${toAddress}: ${result.div(BigNumber.from(10).pow(token.decimals))} (${result} wei, ${token.decimals} decimals) `)
         }).catch(console.log)
-    }, 10000)
-
-
+    })
 
 }).catch((e) => {
     console.log("Could not transfer funds:" + e)
